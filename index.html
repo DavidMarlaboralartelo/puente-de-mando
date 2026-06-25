@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Puente de Mando</title>
+<style>
+  :root{
+    --navy:#001438; --navy2:#04204f; --panel:#0a2a5e; --line:#1c3c6e;
+    --sky:#0EA5E9; --green:#10b981; --amber:#f59e0b; --red:#ef4444;
+    --ink:#e8eef7; --mute:#8aa3c7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--navy);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--sky)}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  header{background:var(--navy2);border-bottom:1px solid var(--line);padding:16px 0}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{background:var(--sky);border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center}
+  .title{font-size:18px;font-weight:700;line-height:1}
+  .sub{color:var(--mute);font-size:12px;margin-top:5px}
+  .btn{border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 12px;font-size:13px;display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{opacity:.85}
+  .btn-primary{background:var(--sky);color:var(--navy);border-color:var(--sky);font-weight:600}
+  .btn-green{background:var(--green);color:var(--navy);font-weight:600}
+  .btn-amber{background:var(--amber);color:var(--navy);font-weight:600}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .seg{font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--navy2);color:var(--ink);border-radius:9px;padding:9px 16px}
+  .seg.active-todo{background:var(--ink);color:var(--navy);border-color:transparent}
+  .seg.active-mar{background:var(--sky);color:var(--navy);border-color:transparent}
+  .seg.active-art{background:var(--green);color:var(--navy);border-color:transparent}
+  .tab{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:500;border:1px solid var(--line);background:var(--navy2);color:var(--ink);border-radius:9px;padding:8px 12px}
+  .tab.active{background:var(--sky);color:var(--navy);border-color:var(--sky)}
+  .chip{font-size:12px;border-radius:999px;padding:2px 7px;background:var(--panel);color:var(--mute);min-width:20px;text-align:center}
+  .tab.active .chip{background:var(--navy);color:var(--sky)}
+  .card{background:var(--navy2);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .grid3{display:grid;grid-template-columns:1fr;gap:12px}
+  .grid2{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:640px){.grid3{grid-template-columns:1fr 1fr 1fr}}
+  @media(min-width:768px){.grid2{grid-template-columns:1fr 1fr}}
+  .kpi-l{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .kpi-v{font-size:30px;font-weight:700;margin-top:5px}
+  .badge{font-size:12px;border-radius:6px;padding:2px 7px;font-weight:600;background:var(--panel)}
+  .b-mar{color:var(--sky)} .b-art{color:var(--green)} .b-amb{color:var(--mute)}
+  .reltitle{font-weight:600;font-size:14px}
+  .relrow{display:flex;align-items:center;justify-content:space-between;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px}
+  .relrow:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0}
+  .tipo{font-size:12px;border-radius:5px;padding:2px 6px;background:var(--panel);color:var(--mute)}
+  .field{font-size:14px;display:flex;gap:8px;margin-top:6px}
+  .field .lbl{color:var(--mute);flex-shrink:0;min-width:112px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .crd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .icobtn{padding:6px;border-radius:7px;color:var(--mute)}
+  .icobtn:hover{opacity:.7}
+  h2.sec{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;margin:0}
+  .sechead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .empty{color:var(--mute);font-size:14px;text-align:center;padding:24px 0}
+  .note{background:var(--navy2);border:1px solid var(--line);color:var(--mute);border-radius:9px;padding:12px 16px;font-size:12px;line-height:1.6;margin-top:24px;margin-bottom:40px}
+  /* modal */
+  .ovl{position:fixed;inset:0;background:rgba(0,5,20,.72);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .modal{background:var(--navy2);border:1px solid var(--line);border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto}
+  .modal .mh,.modal .mf{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .modal .mf{border-bottom:none;border-top:1px solid var(--line);justify-content:flex-end;gap:8px}
+  .modal .mb{padding:16px 20px}
+  label.fl{color:var(--mute);font-size:12px;display:block;margin-bottom:6px}
+  input.f,select.f,textarea.f{width:100%;background:var(--navy);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:14px;outline:none;font-family:inherit;margin-bottom:14px}
+  textarea.f{resize:vertical}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--navy);padding:9px 16px;border-radius:9px;font-size:14px;font-weight:600;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .saldo a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 12px;font-size:14px;text-decoration:none}
+  .saldo a:hover{opacity:.85}
+  svg{display:block}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+  // ---------- iconos ----------
+  function ico(name,color){
+    color=color||"currentColor";var s='width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+    var p={
+      anchor:'<circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>',
+      dash:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',
+      key:'<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>',
+      bank:'<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+      receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/>',
+      plug:'<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v4a6 6 0 0 1-12 0V8Z"/>',
+      shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+      plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+      pencil:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+      trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+      eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+      eyeoff:'<path d="M9.9 4.2A9 9 0 0 1 12 4c7 0 10 8 10 8a13 13 0 0 1-1.7 2.7"/><path d="M6.6 6.6A13 13 0 0 0 2 12s3 8 10 8a9 9 0 0 0 4.7-1.3"/><line x1="2" y1="2" x2="22" y2="22"/>',
+      down:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+      up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+      ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+      x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+      save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+      warn:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+      wallet:'<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>'
+    };
+    return '<svg '+s+'>'+(p[name]||'')+'</svg>';
+  }
+
+  // ---------- config ----------
+  var STORAGE_KEY="puente-de-mando-v1";
+  var WEB_OPTS=["Marlaboral","Artelo","Ambas"];
+  var WEBS=["Todo","Marlaboral","Artelo"];
+  var SECTIONS=[
+    {id:"claves",label:"Claves API",icon:"key",singular:"clave",fields:[
+      {k:"nombre",label:"Nombre",type:"text",req:true},
+      {k:"web",label:"Web",type:"select",opts:WEB_OPTS},
+      {k:"servicio",label:"Servicio",type:"text"},
+      {k:"clave",label:"Clave / API Key",type:"secret"},
+      {k:"panel",label:"URL del panel",type:"url"},
+      {k:"notas",label:"Notas",type:"area"}]},
+    {id:"cuentas",label:"Cuentas y paneles",icon:"bank",singular:"cuenta",fields:[
+      {k:"servicio",label:"Servicio",type:"text",req:true},
+      {k:"web",label:"Web",type:"select",opts:WEB_OPTS},
+      {k:"email",label:"Email / usuario",type:"text"},
+      {k:"panel",label:"URL del panel",type:"url"},
+      {k:"doble",label:"Doble factor (2FA)",type:"text"},
+      {k:"notas",label:"Notas",type:"area"}]},
+    {id:"gastos",label:"Gastos",icon:"receipt",singular:"gasto",fields:[
+      {k:"concepto",label:"Concepto",type:"text",req:true},
+      {k:"web",label:"Web",type:"select",opts:WEB_OPTS},
+      {k:"importe",label:"Importe (€)",type:"number"},
+      {k:"ciclo",label:"Ciclo",type:"select",opts:["Mensual","Anual","Pago único"]},
+      {k:"renovacion",label:"Próxima renovación",type:"date"},
+      {k:"notas",label:"Notas",type:"area"}]},
+    {id:"plugins",label:"Plugins",icon:"plug",singular:"plugin",fields:[
+      {k:"nombre",label:"Plugin",type:"text",req:true},
+      {k:"web",label:"Web",type:"select",opts:WEB_OPTS},
+      {k:"licencia",label:"Licencia",type:"select",opts:["Lifetime","Anual","Mensual","Gratis"]},
+      {k:"coste",label:"Coste (€)",type:"number"},
+      {k:"renovacion",label:"Renovación",type:"date"},
+      {k:"notas",label:"Notas",type:"area"}]},
+    {id:"tokens",label:"Tokens",icon:"shield",singular:"token",fields:[
+      {k:"nombre",label:"Nombre",type:"text",req:true},
+      {k:"web",label:"Web",type:"select",opts:WEB_OPTS},
+      {k:"servicio",label:"Servicio",type:"text"},
+      {k:"permanente",label:"¿Permanente?",type:"select",opts:["No","Sí"]},
+      {k:"caducidad",label:"Caduca el",type:"date"},
+      {k:"instrucciones",label:"Pasos para renovar",type:"area"}]}
+  ];
+  var SALDO_LINKS=[
+    {label:"Saldo Anthropic",url:"https://console.anthropic.com/settings/billing"},
+    {label:"Consumo OpenAI",url:"https://platform.openai.com/usage"},
+    {label:"Uso SerpApi",url:"https://serpapi.com/dashboard"}
+  ];
+  var SEED={
+    claves:[
+      {id:"k1",nombre:"Anthropic API",web:"Ambas",servicio:"Anthropic",clave:"",panel:"https://console.anthropic.com/settings/keys",notas:"Clave estatica, no caduca por tiempo."},
+      {id:"k2",nombre:"OpenAI API",web:"Ambas",servicio:"OpenAI",clave:"",panel:"https://platform.openai.com/api-keys",notas:"Clave estatica, no caduca por tiempo."},
+      {id:"k3",nombre:"SerpApi",web:"Marlaboral",servicio:"SerpApi",clave:"",panel:"https://serpapi.com/manage-api-key",notas:"Importador de empleos. Plan Starter 1000/mes."}
+    ],
+    cuentas:[
+      {id:"c1",servicio:"Meta for Developers",web:"Marlaboral",email:"",panel:"https://developers.facebook.com/apps/",doble:"",notas:"App Marlaboral WhatsApp (bot)."},
+      {id:"c2",servicio:"Hetzner",web:"Ambas",email:"",panel:"https://console.hetzner.cloud",doble:"",notas:"Servidor del n8n. REVISAR facturacion."},
+      {id:"c3",servicio:"Coolify",web:"Ambas",email:"",panel:"http://178.105.89.202:8000",doble:"",notas:"Despliegue de n8n y este panel."},
+      {id:"c4",servicio:"Chatwoot",web:"Marlaboral",email:"info@marlaboral.es",panel:"https://app.chatwoot.com",doble:"",notas:"Account ID 172275."},
+      {id:"c5",servicio:"Raiola Networks",web:"Marlaboral",email:"",panel:"https://panel.raiolanetworks.es",doble:"",notas:"Hosting de Marlaboral."},
+      {id:"c6",servicio:"Dondominio",web:"Marlaboral",email:"",panel:"https://www.dondominio.com",doble:"",notas:"Dominio marlaboral.es."},
+      {id:"c7",servicio:"Hostinger",web:"Artelo",email:"",panel:"https://hpanel.hostinger.com",doble:"",notas:"DNS / dominio artelo.es."}
+    ],
+    gastos:[
+      {id:"g1",concepto:"Hosting Raiola",web:"Marlaboral",importe:"",ciclo:"Anual",renovacion:"",notas:""},
+      {id:"g2",concepto:"Servidor Hetzner",web:"Ambas",importe:"10",ciclo:"Mensual",renovacion:"",notas:"Importe por confirmar. Revisar si llegan facturas."},
+      {id:"g3",concepto:"Hosting / dominio Hostinger",web:"Artelo",importe:"",ciclo:"Anual",renovacion:"",notas:"Por confirmar."}
+    ],
+    plugins:[],
+    tokens:[
+      {id:"t1",nombre:"Token Meta / WhatsApp",web:"Marlaboral",servicio:"Meta",permanente:"No",caducidad:"",
+       instrucciones:"OBJETIVO: convertirlo en PERMANENTE (usuario del sistema) para que no caduque nunca.\n\n1. business.facebook.com > Configuracion del negocio.\n2. Usuarios > Usuarios del sistema > Agregar. Nombre, rol Administrador. Crear.\n3. Agregar activos > Apps > selecciona la app Marlaboral WhatsApp > control total. Asigna tambien la cuenta de WhatsApp.\n4. Generar token > elige la app > Caducidad: Nunca.\n5. Permisos: whatsapp_business_messaging, whatsapp_business_management.\n6. Generar token. SE MUESTRA UNA SOLA VEZ: copialo y guardalo aqui.\n7. Pega el token donde lo use el bot (Chatwoot / n8n)."}
+    ]
+  };
+
+  // ---------- estado ----------
+  var state={data:JSON.parse(JSON.stringify(SEED)),web:"Todo",tab:"resumen",revealed:{}};
+  try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){state.data=JSON.parse(raw);}}catch(e){}
+  function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state.data));}catch(e){toast("No se pudo guardar");}}
+  var uid=function(){return Math.random().toString(36).slice(2,10);};
+
+  // ---------- utilidades ----------
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  function daysUntil(d){if(!d)return null;var x=new Date(d+"T00:00:00");if(isNaN(x))return null;var t=new Date();t.setHours(0,0,0,0);return Math.round((x-t)/86400000);}
+  function fmtDate(d){if(!d)return "—";var x=new Date(d+"T00:00:00");if(isNaN(x))return "—";return x.toLocaleDateString("es-ES",{day:"2-digit",month:"short",year:"numeric"});}
+  function urg(days){if(days==null)return "var(--mute)";if(days<0||days<=14)return "var(--red)";if(days<=30)return "var(--amber)";return "var(--green)";}
+  function matchWeb(rec){if(state.web==="Todo")return true;if(!rec.web)return true;return rec.web===state.web||rec.web==="Ambas";}
+  function webBadge(w){if(!w)return "";var cls=w==="Marlaboral"?"b-mar":w==="Artelo"?"b-art":"b-amb";return '<span class="badge '+cls+'">'+esc(w)+'</span>';}
+  function listOf(id){return (state.data[id]||[]).filter(matchWeb);}
+
+  // ---------- stats ----------
+  function stats(){
+    var fg=listOf("gastos"),fp=listOf("plugins"),ft=listOf("tokens");
+    function monthly(arr,ik,ck){return arr.reduce(function(s,x){var v=parseFloat(x[ik])||0;var c=(x[ck]||"").toLowerCase();if(c==="mensual")return s+v;if(c==="anual")return s+v/12;return s;},0);}
+    var mes=monthly(fg,"importe","ciclo")+monthly(fp,"coste","licencia");
+    var rel=[];
+    fg.forEach(function(g){if(g.renovacion)rel.push({tipo:"Gasto",nombre:g.concepto,fecha:g.renovacion,web:g.web});});
+    fp.forEach(function(p){if(p.renovacion)rel.push({tipo:"Plugin",nombre:p.nombre,fecha:p.renovacion,web:p.web});});
+    ft.forEach(function(t){if(t.permanente!=="Sí"&&t.caducidad)rel.push({tipo:"Token",nombre:t.nombre,fecha:t.caducidad,web:t.web});});
+    rel.sort(function(a,b){return new Date(a.fecha)-new Date(b.fecha);});
+    var riesgo=ft.filter(function(t){if(t.permanente==="Sí")return false;var d=daysUntil(t.caducidad);return d!=null&&d<=30;});
+    return {mes:mes,anio:mes*12,rel:rel,riesgo:riesgo};
+  }
+
+  // ---------- render ----------
+  function render(){
+    var app=document.getElementById("app");
+    var s=stats();
+    var html='';
+    html+='<header><div class="wrap hrow">'
+      +'<div class="brand"><div class="logo">'+ico("anchor","#001438")+'</div>'
+      +'<div><div class="title">Puente de Mando</div><div class="sub">Claves, cuentas, gastos y renovaciones</div></div></div>'
+      +'<div class="row"><button class="btn" id="btnCopia">'+ico("down")+' Copia</button>'
+      +'<button class="btn" id="btnRestaurar">'+ico("up")+' Restaurar</button></div>'
+      +'</div></header>';
+
+    html+='<div class="wrap" style="padding-top:16px"><div class="row"><span class="sub" style="margin-right:4px">Viendo:</span>';
+    WEBS.forEach(function(w){var a=state.web===w?(w==="Todo"?"active-todo":w==="Marlaboral"?"active-mar":"active-art"):"";html+='<button class="seg '+a+'" data-web="'+w+'">'+w+'</button>';});
+    html+='</div></div>';
+
+    html+='<div class="wrap" style="padding-top:16px"><div class="row">';
+    html+='<button class="tab '+(state.tab==="resumen"?"active":"")+'" data-tab="resumen">'+ico("dash")+' Resumen</button>';
+    SECTIONS.forEach(function(sec){var n=listOf(sec.id).length;html+='<button class="tab '+(state.tab===sec.id?"active":"")+'" data-tab="'+sec.id+'">'+ico(sec.icon)+' '+sec.label+' <span class="chip">'+n+'</span></button>';});
+    html+='</div></div>';
+
+    html+='<div class="wrap" style="padding:24px 20px">';
+    if(state.tab==="resumen"){html+=renderResumen(s);}else{html+=renderSection();}
+    html+='</div>';
+
+    html+='<div class="wrap"><div class="note">Tus datos se guardan solo en este navegador; no salen de aqui. Para llevarlos del ordenador al movil usa "Copia" en uno y "Restaurar" en el otro. Haz una copia de vez en cuando y guardala en tu Drive.</div></div>';
+
+    app.innerHTML=html;
+    wire();
+  }
+
+  function renderResumen(s){
+    var w=state.web!=="Todo"?(" · "+state.web):"";
+    var h='<div class="grid3">';
+    h+='<div class="card"><div class="kpi-l">Gasto mensual'+w+'</div><div class="kpi-v" style="color:var(--sky)">'+s.mes.toFixed(2)+' €</div></div>';
+    h+='<div class="card"><div class="kpi-l">Gasto anual'+w+'</div><div class="kpi-v">'+s.anio.toFixed(0)+' €</div></div>';
+    h+='<div class="card" style="border-color:'+(s.riesgo.length?"var(--red)":"var(--line)")+'"><div class="kpi-l">Tokens por caducar</div><div class="kpi-v" style="color:'+(s.riesgo.length?"var(--red)":"var(--green)")+'">'+s.riesgo.length+'</div></div>';
+    h+='</div>';
+
+    h+='<div class="card" style="margin-top:20px"><div class="row" style="margin-bottom:12px">'+ico("wallet","#0EA5E9")+'<span class="reltitle">Saldo y consumo</span></div><div class="row saldo">';
+    SALDO_LINKS.forEach(function(l){h+='<a href="'+l.url+'" target="_blank" rel="noreferrer">'+esc(l.label)+' '+ico("ext","#0EA5E9")+'</a>';});
+    h+='</div></div>';
+
+    if(s.riesgo.length){
+      h+='<div class="card" style="margin-top:20px;border-color:var(--red)"><div class="row" style="color:var(--red);margin-bottom:12px">'+ico("warn","#ef4444")+'<span class="reltitle">Atencion: tokens que caducan pronto</span></div>';
+      s.riesgo.forEach(function(t){var d=daysUntil(t.caducidad);h+='<div class="relrow"><span>'+esc(t.nombre)+' '+webBadge(t.web)+'</span><span style="color:'+urg(d)+';font-weight:600">'+(d<0?("caducado hace "+(-d)+" d"):(d+" dias"))+'</span></div>';});
+      h+='</div>';
+    }
+
+    h+='<div class="card" style="margin-top:20px"><div class="sechead" style="margin-bottom:12px"><span class="reltitle">Proximas renovaciones</span></div>';
+    if(!s.rel.length){h+='<div class="empty">Sin fechas de renovacion todavia. Anadelas en Gastos, Plugins o Tokens.</div>';}
+    else{s.rel.slice(0,8).forEach(function(r){var d=daysUntil(r.fecha);h+='<div class="relrow"><span class="row"><span class="tipo">'+r.tipo+'</span> '+esc(r.nombre)+' '+webBadge(r.web)+'</span><span style="text-align:right">'+fmtDate(r.fecha)+'<br><span style="font-size:12px;color:'+urg(d)+'">'+(d<0?("hace "+(-d)+" d"):("en "+d+" d"))+'</span></span></div>';});}
+    h+='</div>';
+    return h;
+  }
+
+  function renderSection(){
+    var sec=SECTIONS.find(function(x){return x.id===state.tab;});
+    var recs=listOf(sec.id);
+    var h='<div class="sechead"><h2 class="sec">'+ico(sec.icon,"#0EA5E9")+' '+sec.label+'</h2><button class="btn btn-primary" id="btnAdd">'+ico("plus","#001438")+' Anadir</button></div>';
+    if(!recs.length){h+='<div class="card"><div class="empty">No hay nada aqui para esta vista. Pulsa "Anadir" para crear tu primer '+sec.singular+'.</div></div>';return h;}
+    h+='<div class="grid2">';
+    recs.forEach(function(rec){h+=renderCard(sec,rec);});
+    h+='</div>';
+    return h;
+  }
+
+  function renderCard(sec,rec){
+    var title=rec[sec.fields[0].k]||"(sin nombre)";
+    var h='<div class="card"><div class="crd-head"><div class="row">'+'<span style="font-weight:600">'+esc(title)+'</span> '+webBadge(rec.web)+'</div>'
+      +'<div class="row" style="gap:2px"><button class="icobtn" data-edit="'+rec.id+'">'+ico("pencil")+'</button>'
+      +'<button class="icobtn" style="color:var(--red)" data-del="'+rec.id+'">'+ico("trash","#ef4444")+'</button></div></div>';
+    sec.fields.slice(1).filter(function(f){return f.k!=="web";}).forEach(function(f){
+      var val=rec[f.k];if(!val)return;
+      var isExp=(f.k==="caducidad"||f.k==="renovacion");var d=isExp?daysUntil(val):null;
+      h+='<div class="field"><span class="lbl">'+f.label+'</span>';
+      if(f.type==="secret"){var rev=state.revealed[rec.id];h+='<span class="row" style="gap:8px"><span class="mono">'+(rev?esc(val):"•".repeat(Math.min(val.length,18)))+'</span><button class="icobtn" data-reveal="'+rec.id+'" style="padding:0;color:var(--sky)">'+ico(rev?"eyeoff":"eye","#0EA5E9")+'</button></span>';}
+      else if(f.type==="url"){h+='<a href="'+esc(val)+'" target="_blank" rel="noreferrer">abrir panel '+ico("ext","#0EA5E9")+'</a>';}
+      else if(f.type==="area"){h+='<span style="white-space:pre-wrap;word-break:break-word">'+esc(val)+'</span>';}
+      else if(isExp){h+='<span style="color:'+urg(d)+'">'+fmtDate(val)+(d!=null?(' <span style="font-size:12px">('+(d<0?("hace "+(-d)+" d"):("en "+d+" d"))+')</span>'):'')+'</span>';}
+      else{h+='<span style="word-break:break-word">'+esc(val)+'</span>';}
+      h+='</div>';
+    });
+    h+='</div>';
+    return h;
+  }
+
+  // ---------- modal editor ----------
+  function openEditor(sectionId,rec){
+    var sec=SECTIONS.find(function(x){return x.id===sectionId;});
+    rec=rec||{};
+    var defWeb=state.web==="Todo"?"Ambas":state.web;
+    var h='<div class="ovl" id="ovl"><div class="modal"><div class="mh"><span style="font-weight:600">'+(rec.id?"Editar":"Nuevo")+' '+sec.singular+'</span><button class="icobtn" id="mClose">'+ico("x")+'</button></div><div class="mb">';
+    sec.fields.forEach(function(f){
+      var v=f.k==="web"?(rec.web||defWeb):(rec[f.k]!=null?rec[f.k]:(f.type==="select"?f.opts[0]:""));
+      h+='<label class="fl">'+f.label+(f.req?" *":"")+'</label>';
+      if(f.type==="area"){h+='<textarea class="f" data-k="'+f.k+'" rows="'+(f.k==="instrucciones"?8:3)+'">'+esc(v)+'</textarea>';}
+      else if(f.type==="select"){h+='<select class="f" data-k="'+f.k+'">'+f.opts.map(function(o){return '<option '+(o===v?"selected":"")+'>'+esc(o)+'</option>';}).join("")+'</select>';}
+      else{var t=f.type==="number"?"number":f.type==="date"?"date":"text";h+='<input class="f" type="'+t+'" data-k="'+f.k+'" value="'+esc(v)+'">';}
+    });
+    h+='</div><div class="mf"><button class="btn" id="mCancel">Cancelar</button><button class="btn btn-green" id="mSave">'+ico("save","#001438")+' Guardar</button></div></div></div>';
+    var div=document.createElement("div");div.innerHTML=h;document.body.appendChild(div.firstChild);
+
+    document.getElementById("mClose").onclick=closeModal;
+    document.getElementById("mCancel").onclick=closeModal;
+    document.getElementById("ovl").onclick=function(e){if(e.target.id==="ovl")closeModal();};
+    document.getElementById("mSave").onclick=function(){
+      var form={};if(rec.id)form.id=rec.id;
+      document.querySelectorAll("#ovl [data-k]").forEach(function(el){form[el.getAttribute("data-k")]=el.value;});
+      var miss=sec.fields.some(function(f){return f.req&&!form[f.k];});
+      if(miss){toast("Falta el campo obligatorio");return;}
+      var list=state.data[sectionId]||[];
+      if(form.id&&list.some(function(x){return x.id===form.id;})){state.data[sectionId]=list.map(function(x){return x.id===form.id?form:x;});}
+      else{form.id=uid();state.data[sectionId]=list.concat([form]);}
+      save();closeModal();toast("Guardado");render();
+    };
+  }
+  function closeModal(){var o=document.getElementById("ovl");if(o)o.remove();}
+
+  // ---------- import ----------
+  function openImport(){
+    var h='<div class="ovl" id="ovl"><div class="modal"><div class="mh"><span style="font-weight:600">Restaurar copia</span><button class="icobtn" id="mClose">'+ico("x")+'</button></div><div class="mb">'
+      +'<p class="sub" style="margin-top:0">Sube el archivo .json de una copia anterior, o pega su contenido. Esto reemplaza todos los datos actuales.</p>'
+      +'<input type="file" accept="application/json" id="impFile" class="sub" style="margin-bottom:12px"><textarea class="f" id="impText" rows="6" placeholder="...o pega aqui el contenido"></textarea><div id="impErr" style="color:var(--red);font-size:12px"></div>'
+      +'</div><div class="mf"><button class="btn" id="mCancel">Cancelar</button><button class="btn btn-amber" id="mApply">Restaurar</button></div></div></div>';
+    var div=document.createElement("div");div.innerHTML=h;document.body.appendChild(div.firstChild);
+    document.getElementById("mClose").onclick=closeModal;
+    document.getElementById("mCancel").onclick=closeModal;
+    document.getElementById("impFile").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){document.getElementById("impText").value=r.result;};r.readAsText(f);};
+    document.getElementById("mApply").onclick=function(){
+      try{var obj=JSON.parse(document.getElementById("impText").value);if(typeof obj!=="object")throw 0;state.data=obj;save();closeModal();toast("Datos restaurados");render();}
+      catch(e){document.getElementById("impErr").textContent="El archivo no es valido. Usa una copia descargada desde esta app.";}
+    };
+  }
+
+  // ---------- export ----------
+  function exportData(){
+    var blob=new Blob([JSON.stringify(state.data,null,2)],{type:"application/json"});
+    var url=URL.createObjectURL(blob);var a=document.createElement("a");
+    a.href=url;a.download="puente-de-mando-"+new Date().toISOString().slice(0,10)+".json";a.click();
+    URL.revokeObjectURL(url);toast("Copia descargada");
+  }
+
+  // ---------- toast ----------
+  var toastT;
+  function toast(msg){var old=document.getElementById("toast");if(old)old.remove();var d=document.createElement("div");d.id="toast";d.className="toast";d.textContent=msg;document.body.appendChild(d);clearTimeout(toastT);toastT=setTimeout(function(){d.remove();},2600);}
+
+  // ---------- wire events ----------
+  function wire(){
+    document.getElementById("btnCopia").onclick=exportData;
+    document.getElementById("btnRestaurar").onclick=openImport;
+    document.querySelectorAll("[data-web]").forEach(function(b){b.onclick=function(){state.web=b.getAttribute("data-web");render();};});
+    document.querySelectorAll("[data-tab]").forEach(function(b){b.onclick=function(){state.tab=b.getAttribute("data-tab");render();};});
+    var add=document.getElementById("btnAdd");if(add)add.onclick=function(){openEditor(state.tab,{});};
+    document.querySelectorAll("[data-edit]").forEach(function(b){b.onclick=function(){var id=b.getAttribute("data-edit");var rec=(state.data[state.tab]||[]).find(function(x){return x.id===id;});openEditor(state.tab,rec);};});
+    document.querySelectorAll("[data-del]").forEach(function(b){b.onclick=function(){var id=b.getAttribute("data-del");if(confirm("¿Eliminar este elemento?")){state.data[state.tab]=(state.data[state.tab]||[]).filter(function(x){return x.id!==id;});save();toast("Eliminado");render();}};});
+    document.querySelectorAll("[data-reveal]").forEach(function(b){b.onclick=function(){var id=b.getAttribute("data-reveal");state.revealed[id]=!state.revealed[id];render();};});
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
